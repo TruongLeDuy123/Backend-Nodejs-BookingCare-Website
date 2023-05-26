@@ -86,14 +86,14 @@ let updateUserData = (data) => {
         try
         {
             let user = await db.User.findOne({
-                where: {id: data.id}
+                where: {id: data.id},
+                raw: false
             })
             if (user)
             {
                 user.firstName = data.firstName
                 user.lastName = data.lastName
                 user.address = data.address
-
                 await user.save()
                 let allUsers = await db.User.findAll()
                 resolve(allUsers)
@@ -114,13 +114,17 @@ let deleteUserById = (userid) => {
     return new Promise(async(resolve, reject) => {
         try
         {
-            let user = await db.User.findOne({
-                where: {id: userid}
-            })
+            // let user = await db.User.findOne({
+            //     where: {id: userid}
+            // })
+            let user = await db.User
             if (user)
             {
-                await user.destroy()
+                await user.destroy({
+                    where: {id: userid}
+                })
             }
+            
             resolve() // return 
         }
         catch(e)
